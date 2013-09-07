@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import operator
 try:
   # This part is surrounded in try/except because the this config.py file is
   # also used in the run.py script which is used to compile/minify the client
@@ -9,6 +10,7 @@ try:
   from datetime import datetime
   CONFIG_DB = model.Config.get_master_db()
   SECRET_KEY = CONFIG_DB.flask_secret_key.encode('ascii')
+  LOCALE_DEFAULT = CONFIG_DB.locale
   CURRENT_VERSION_ID = os.environ.get('CURRENT_VERSION_ID')
   CURRENT_VERSION_NAME = CURRENT_VERSION_ID.split('.')[0]
   CURRENT_VERSION_TIMESTAMP = long(CURRENT_VERSION_ID.split('.')[1]) >> 28
@@ -21,6 +23,23 @@ DEVELOPMENT = not PRODUCTION
 DEBUG = DEVELOPMENT
 
 DEFAULT_DB_LIMIT = 64
+
+################################################################################
+# i18n Stuff
+################################################################################
+
+# Languages: http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+# Countries: http://en.wikipedia.org/wiki/ISO_3166-1
+# To Add/Modify languages use one of the filenames in: libx/babel/localedata/
+# Examples with country included: en_GB, ru_RU, de_CH
+LOCALE = {
+  'en': u'English',
+  'el': u'Ελληνικά',
+  'pl': u'Polski',
+  'ru': u'Русский',
+}
+
+LOCALE_SORTED = sorted(LOCALE.iteritems(), key=operator.itemgetter(1))
 
 ################################################################################
 # Client modules, also used by the run.py script.

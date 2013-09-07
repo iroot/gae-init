@@ -45,11 +45,11 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th class="col-xs-3">{{utils.order_link('Name', 'user_list', 'name')}}</th>
-            <th class="col-xs-2 hidden-xs">{{utils.order_link('Username', 'user_list', 'username')}}</th>
-            <th class="col-xs-3 hidden-xs">{{utils.order_link('Email', 'user_list', 'email')}}</th>
-            <th class="col-xs-2">{{utils.order_link('Created', 'user_list', 'created')}}</th>
-            <th class="col-xs-2 hidden-xs">{{utils.order_link('Modified', 'user_list', 'modified')}}</th>
+            <th class="col-xs-3">{{utils.order_link(_('Name'), 'user_list', 'name')}}</th>
+            <th class="col-xs-2 hidden-xs">{{utils.order_link(_('Username'), 'user_list', 'username')}}</th>
+            <th class="col-xs-3 hidden-xs">{{utils.order_link(_('Email'), 'user_list', 'email')}}</th>
+            <th class="col-xs-2">{{utils.order_link(_('Created'), 'user_list', 'created')}}</th>
+            <th class="col-xs-2 hidden-xs">{{utils.order_link(_('Modified'), 'user_list', 'modified')}}</th>
           </tr>
         </thead>
         <tbody>
@@ -82,7 +82,7 @@
   </div>
   # if more_url
     <ul class="pager">
-      <li><a href="{{more_url}}">Next Page</a></li>
+      <li><a href="{{more_url}}">{{_('Next Page')}}</a></li>
     </ul>
   # endif
 # endblock

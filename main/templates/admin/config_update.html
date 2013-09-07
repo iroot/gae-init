@@ -20,6 +20,7 @@
 
           {{forms.text_field(form.brand_name)}}
           {{forms.text_field(form.bucket_name)}}
+          {{forms.select_field(form.locale)}}
           {{forms.text_field(form.feedback_email)}}
           {{forms.text_field(form.analytics_id)}}
           {{forms.text_field(form.facebook_app_id)}}
@@ -30,8 +31,8 @@
           {{forms.textarea_field(form.announcement_html)}}
           {{forms.select_field(form.announcement_type)}}
 
-          <button type="submit" class="btn btn-primary btn-block btn-loading" data-loading-text="Updating Config..">
-            Update Config
+          <button type="submit" class="btn btn-primary btn-block btn-loading" data-loading-text="{{_('Updating Config..')}}">
+            {{_('Update Config')}}
           </button>
         </fieldset>
       </form>

@@ -35,6 +35,7 @@ class Config(Base, modelx.ConfigX):
   facebook_app_secret = ndb.StringProperty(default='')
   feedback_email = ndb.StringProperty(default='')
   flask_secret_key = ndb.StringProperty(default=str(uuid4()).replace('-', ''))
+  locale = ndb.StringProperty(default='en')
   twitter_consumer_key = ndb.StringProperty(default='')
   twitter_consumer_secret = ndb.StringProperty(default='')
 
@@ -48,6 +49,7 @@ class Config(Base, modelx.ConfigX):
       'facebook_app_secret',
       'feedback_email',
       'flask_secret_key',
+      'locale',
       'twitter_consumer_key',
       'twitter_consumer_secret',
     ]))
@@ -57,6 +59,7 @@ class User(Base, modelx.UserX):
   name = ndb.StringProperty(indexed=True, required=True)
   username = ndb.StringProperty(indexed=True, required=True)
   email = ndb.StringProperty(indexed=True, default='')
+  locale = ndb.StringProperty(default='')
 
   active = ndb.BooleanProperty(default=True)
   admin = ndb.BooleanProperty(default=False)
@@ -69,6 +72,7 @@ class User(Base, modelx.UserX):
       'name',
       'username',
       'avatar_url',
+      'locale',
     ]))
 
 

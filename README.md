@@ -1,16 +1,14 @@
-gae-init-upload
-===============
+gae-init-page
+=============
 
-**gae-init-upload** is a clone of [gae-init][] for
-uploading resources using Google App Engine either on Blobstore or on Google
-Cloud Storage.
+**gae-init-page** is a clone of [gae-init][] and [flask-gae-app][].
 
 
 Demo Page
 ---------
 
 The latest version is always accessible from:
-[http://upload.gae-init.appspot.com](http://upload.gae-init.appspot.com)
+[http://gae-init-page.appspot.com](http://gae-init-page.appspot.com)
 
 Documentation
 -------------
@@ -62,10 +60,14 @@ Tech Stack
   - [Bootstrap][]
   - [Font Awesome][]
   - [NProgress][]
+  - [Babel][]
 
 Requirements
 ------------
 
+  - Being familiar with [gae-init][]
+  - [Babel][] - `easy_install Babel`
+  - [Jinja2][] - `easy_install Jinja2`
   - [Google App Engine SDK for Python][]
   - [node.js][]
   - [OSX][] or [Linux][] or [Windows][]
@@ -85,6 +87,7 @@ Author
 
 [![Lipis flair on stackoverflow.com][lipisflair]][lipis]
 
+[babel]: http://babel.edgewall.org/wiki/Download
 [bootstrap]: http://getbootstrap.com/
 [chris]: http://stackoverflow.com/users/226394/chris-top
 [coffeescript]: http://coffeescript.org/

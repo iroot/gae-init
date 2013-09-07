@@ -2,7 +2,11 @@
 
 from google.appengine.api import mail
 from flaskext import wtf
+from flaskext.babel import Babel
+from flaskext.babel import gettext as __
+from flaskext.babel import lazy_gettext as _
 import flask
+
 import config
 import model
 import util
@@ -12,6 +16,9 @@ app.config.from_object(config)
 app.jinja_env.line_statement_prefix = '#'
 app.jinja_env.line_comment_prefix = '##'
 app.jinja_env.globals.update(slugify=util.slugify)
+
+app.config['BABEL_DEFAULT_LOCALE'] = config.LOCALE_DEFAULT
+babel = Babel(app)
 
 import auth
 import admin
@@ -44,11 +51,15 @@ def sitemap():
 # Profile stuff
 ################################################################################
 class ProfileUpdateForm(wtf.Form):
-  name = wtf.TextField('Name', [wtf.validators.required()])
-  email = wtf.TextField('Email', [
+  name = wtf.TextField(_('Name'), [wtf.validators.required()])
+  email = wtf.TextField(_('Email'), [
       wtf.validators.optional(),
-      wtf.validators.email('That does not look like an email'),
+      wtf.validators.email(_('That does not look like an email')),
     ])
+  locale = wtf.SelectField(
+      _('Language'),
+      choices=config.LOCALE_SORTED,
+    )
 
 
 @app.route('/_s/profile/', endpoint='profile_service')
@@ -60,18 +71,23 @@ def profile():
   if form.validate_on_submit():
     user_db.name = form.name.data.strip()
     user_db.email = form.email.data.strip().lower()
+    user_db.locale = form.locale.data.strip()
     user_db.put()
-    return flask.redirect(flask.url_for('welcome'))
+    return flask.redirect(flask.url_for(
+        'set_locale', locale=user_db.locale, next=flask.url_for('welcome')
+      ))
+
   if not form.errors:
     form.name.data = user_db.name
     form.email.data = user_db.email or ''
+    form.locale.data = user_db.locale or auth.get_locale()
 
   if flask.request.path.startswith('/_s/'):
     return util.jsonify_model_db(user_db)
 
   return flask.render_template(
       'profile.html',
-      title='Profile',
+      title=_('Profile'),
       html_class='profile',
       form=form,
       user_db=user_db,
@@ -82,11 +98,11 @@ def profile():
 # Feedback
 ################################################################################
 class FeedbackForm(wtf.Form):
-  subject = wtf.TextField('Subject', [wtf.validators.required()])
-  message = wtf.TextAreaField('Message', [wtf.validators.required()])
-  email = wtf.TextField('Email (optional)', [
+  subject = wtf.TextField(_('Subject'), [wtf.validators.required()])
+  message = wtf.TextAreaField(_('Message'), [wtf.validators.required()])
+  email = wtf.TextField(_('Email (optional)'), [
       wtf.validators.optional(),
-      wtf.validators.email('That does not look like an email'),
+      wtf.validators.email(_('That does not look like an email')),
     ])
 
 
@@ -107,14 +123,14 @@ def feedback():
         reply_to=form.email.data.strip() or config.CONFIG_DB.feedback_email,
         body='%s\n\n%s' % (form.message.data.strip(), form.email.data.strip())
       )
-    flask.flash('Thank you for your feedback!', category='success')
+    flask.flash(__('Thank you for your feedback!'), category='success')
     return flask.redirect(flask.url_for('welcome'))
   if not form.errors and auth.current_user_id() > 0:
     form.email.data = auth.current_user_db().email
 
   return flask.render_template(
       'feedback.html',
-      title='Feedback',
+      title=_('Feedback'),
       html_class='feedback',
       form=form,
     )
@@ -142,7 +158,7 @@ def user_list():
   return flask.render_template(
       'user_list.html',
       html_class='user',
-      title='User List',
+      title=_('User List'),
       user_dbs=user_dbs,
       more_url=util.generate_more_url(more_cursor),
     )

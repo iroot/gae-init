@@ -36,6 +36,23 @@ parser.add_argument('-p', '--port', dest='port', action='store', default='8080',
 parser.add_argument('-f', '--flush', dest='flush', action='store_true',
     help='clears the datastore, blobstore, etc',
   )
+parser.add_argument('-e', '--pybabel-extract', dest='pybabel_extract', action='store_true',
+    help='extract messages from source files and generate messages.pot (pybabel extract..)',
+  )
+parser.add_argument('-u', '--pybabel-update', dest='pybabel_update', action='store_true',
+    help='update existing message catalogs from messages.pot (pybabel update..)',
+  )
+parser.add_argument('-l', '--pybabel-init', dest='locale', action='store',
+    help='create new message catalogs from messages.pot (pybabel init..)',
+  )
+parser.add_argument('-i', '--pybabel-init-missing', dest='init', action='store_true',
+    help='''create new message catalogs from messages.pot that are defined
+    in config.py and still not present (pybabel init..)''',
+  )
+parser.add_argument('-b', '--pybabel-compile', dest='pybabel_compile', action='store_true',
+    help='compile message catalogs to MO files (pybabel compile..)',
+  )
+
 args = parser.parse_args()
 
 
@@ -55,11 +72,15 @@ DIR_NODE_MODULES = 'node_modules'
 DIR_BIN = '.bin'
 DIR_TEMP = 'temp'
 DIR_STORAGE = 'storage'
+DIR_TRANSLATIONS = 'translations'
 
 FILE_ZIP = '%s.zip' % DIR_LIB
 FILE_COFFEE = 'coffee'
 FILE_LESS = 'lessc'
 FILE_UGLIFYJS = 'uglifyjs'
+
+FILE_BABEL_CFG = 'babel.cfg'
+FILE_MESSAGES_POT = 'messages.pot'
 
 root = os.path.dirname(os.path.realpath(__file__))
 dir_static = os.path.join(root, DIR_STATIC)
@@ -86,6 +107,9 @@ file_uglifyjs = os.path.join(dir_bin, FILE_UGLIFYJS)
 
 dir_temp = os.path.join(root, '..', DIR_TEMP)
 dir_storage = os.path.join(dir_temp, DIR_STORAGE)
+
+file_babel_cfg = os.path.join(DIR_TRANSLATIONS, FILE_BABEL_CFG)
+file_messages_pot = os.path.join(DIR_TRANSLATIONS, FILE_MESSAGES_POT)
 
 
 ################################################################################
@@ -236,6 +260,37 @@ def update_missing_args():
 
 
 ################################################################################
+# Babel Stuff
+################################################################################
+def pybabel_extract():
+  os.system('"pybabel" extract -k _ -k __ -F %s --sort-by-file --omit-header -o %s .' % (
+      file_babel_cfg, file_messages_pot,
+    ))
+
+
+def pybabel_update():
+  os.system('"pybabel" update -i %s -d %s' % (
+      file_messages_pot, DIR_TRANSLATIONS,
+    ))
+
+
+def pybabel_init(locale):
+  os.system('"pybabel" init -i %s -d %s -l %s' % (
+      file_messages_pot, DIR_TRANSLATIONS, locale,
+    ))
+
+
+def pybabel_init_missing():
+  for locale in config.LOCALE:
+    if not os.path.exists(os.path.join(DIR_TRANSLATIONS, locale)):
+      pybabel_init(locale)
+
+
+def pybabel_compile():
+  os.system('"pybabel" compile -f -d %s' % (DIR_TRANSLATIONS))
+
+
+################################################################################
 # Main
 ################################################################################
 SCRIPTS = config.SCRIPTS
@@ -289,6 +344,21 @@ if args.minify:
     os_execute(file_uglifyjs, '-nc', pretty_js, ugly_js)
     os.remove(pretty_js)
   print_out('DONE')
+
+if args.pybabel_extract:
+  pybabel_extract()
+
+if args.init:
+  pybabel_init_missing()
+
+if args.pybabel_update:
+  pybabel_update()
+
+if args.locale:
+  pybabel_init(args.locale)
+
+if args.pybabel_compile:
+  pybabel_compile()
 
 if args.watch:
   print_out('WATCHING')

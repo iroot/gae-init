@@ -47,6 +47,13 @@ def get_next_url():
   return flask.url_for('welcome')
 
 
+def set_locale(locale, response):
+  if not locale:
+    return response
+  response.set_cookie('locale', value=locale, path='/')
+  return response
+
+
 ################################################################################
 # Model manipulations
 ################################################################################

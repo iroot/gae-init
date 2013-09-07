@@ -18,7 +18,7 @@
 
           {{forms.text_field(form.name)}}
           {{forms.email_field(form.email)}}
-
+          {{forms.select_field(form.locale)}}
         </fieldset>
       </div>
       <div class="col-md-2 col-sm-3">
@@ -40,7 +40,7 @@
       <div class="col-md-6 col-sm-9">
         <div class="controls">
           <button type="submit" class="btn btn-primary btn-block btn-loading" data-loading-text="Updating Profile..">
-            Update Profile
+            {{_('Update Profile')}}
           </button>
         </div>
       </div>

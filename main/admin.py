@@ -2,6 +2,8 @@
 
 import flask
 from flaskext import wtf
+from flaskext.babel import lazy_gettext as _
+from flaskext.babel import gettext as __
 
 import auth
 import util
@@ -23,11 +25,13 @@ class ConfigUpdateForm(wtf.Form):
   facebook_app_secret = wtf.TextField('Facebook App Secret')
   feedback_email = wtf.TextField('Feedback Email', [
       wtf.validators.optional(),
-      wtf.validators.email('That does not look like an email')
+      wtf.validators.email('That does not look like an email'),
+      wtf.validators.email('That does not look like an email'),
     ])
   flask_secret_key = wtf.TextField('Flask Secret Key', [
       wtf.validators.required()
     ])
+  locale = wtf.SelectField('Default Locale', choices=config.LOCALE_SORTED)
   twitter_consumer_key = wtf.TextField('Twitter Consumer Key')
   twitter_consumer_secret = wtf.TextField('Twitter Consumer Secret')
 
@@ -49,6 +53,7 @@ def admin_config_update():
     config_db.facebook_app_secret = form.facebook_app_secret.data.strip()
     config_db.feedback_email = form.feedback_email.data.strip()
     config_db.flask_secret_key = form.flask_secret_key.data.strip()
+    config_db.locale = form.locale.data.strip()
     config_db.twitter_consumer_key = form.twitter_consumer_key.data.strip()
     config_db.twitter_consumer_secret = form.twitter_consumer_secret.data.strip()
     config_db.put()
@@ -65,6 +70,7 @@ def admin_config_update():
     form.facebook_app_secret.data = config_db.facebook_app_secret
     form.feedback_email.data = config_db.feedback_email
     form.flask_secret_key.data = config_db.flask_secret_key
+    form.locale.data = config_db.locale
     form.twitter_consumer_key.data = config_db.twitter_consumer_key
     form.twitter_consumer_secret.data = config_db.twitter_consumer_secret
 
@@ -73,7 +79,7 @@ def admin_config_update():
 
   return flask.render_template(
       'admin/config_update.html',
-      title='Admin Config',
+      title=_('Admin Config'),
       html_class='admin-config',
       form=form,
       config_db=config_db,
