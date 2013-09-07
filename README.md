@@ -115,3 +115,4 @@ Author
 [tutorial]: http://docs.gae-init.appspot.com/tutorial/
 [tzador]: http://stackoverflow.com/users/165697/tzador
 [windows]: http://windows.microsoft.com/
+[flask-gae-app]: https://github.com/joemarct/flask-gae-app
